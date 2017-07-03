@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="jquery.min.js"></script>
+<script>
+$(document).ready(function () {
+	$("#login").click(function() {
+		$.ajax({
+			method: "POST",
+			url:"/login",
+			contentType: "application/json; charset=utf-8",
+			dataType: "json" /* expecting data type */,
+			data: JSON.stringify({
+				username: $("#username").val(),
+				password: $("#password").val()
+			})
+		}).done(function (msg) {
+			$("#retjson").text(JSON.stringify(msg, null, 2));
+			var token = msg.token || '';
+			$("#token").val(token);
+		});
+	});
+
+	$("#auth").click(function() {
+		$.ajax({
+			method: "GET",
+			url:"/auth",
+			beforeSend: function (request) {
+				var token = $("#token").val();
+				request.setRequestHeader("tk-auth", token);
+			},
+		}).done(function (msg) {
+			$("#retjson").text(JSON.stringify(msg, null, 2));
+		});
+	});
+});
+</script>
+</head>
+<body>
+<h3>Login</h3>
+<input  id="username" placeholder="user name"/>
+<input  id="password" placeholder="password"/>
+<button id="login">login</button>
+
+<h3>Auth</h3>
+<input  id="token" style="width: 100%" placeholder="token"/>
+<button id="auth">token authentication</button>
+
+<h3>Return JSON</h3>
+<span id="retjson" style="color:gray"></span></p>
+</body>
+</html>
