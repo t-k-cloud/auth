@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="jquery.min.js"></script>
+<script>
+$(document).ready(function () {
+	$.ajax({
+		method: "POST",
+		url:"/login",
+		contentType: "application/json; charset=utf-8",
+		dataType: "json" /* expecting data type */,
+		data: JSON.stringify({
+			username: "foo",
+			password: "barr"
+		})
+	}).done(function (msg) {
+		console.log(msg);
+	});
+});
+</script>
+</head>
+<body>this is a test</body>
+</html>
