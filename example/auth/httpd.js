@@ -5,6 +5,18 @@ var auth= require('../../auth.js');
 var app = express();
 app.use(bodyParser.json());
 
+function require_auth(req, res, next) {
+	var reqHeaders = req.headers;
+	var token = reqHeaders['tk-auth'] || '';
+	var authRes = auth.tokVerify(token);
+	var fromUrl = encodeURI(req.url);
+
+	if (authRes.pass)
+		return next();
+	else
+		res.redirect('/auth.html?from=' + fromUrl);
+}
+
 app.post('/login', function (req, res) {
 	var reqJson = req.body;
 	var ip = req.headers['x-real-ip'] ?
@@ -25,11 +37,14 @@ app.post('/login', function (req, res) {
 		"token": loginRes.token
 	});
 
-}).get('/auth', function (req, res) {;
+}).get('/test_auth', function (req, res) {;
 	var reqHeaders = req.headers;
 	var token = reqHeaders['tk-auth'] || '';
 	var authRes = auth.tokVerify(token);
 	res.json(authRes);
+
+}).get('/private', require_auth, function (req, res) {;
+	res.send('look at me!');
 });
 
 app.use(express.static('.'));

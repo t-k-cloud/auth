@@ -24,7 +24,7 @@ $(document).ready(function () {
 	$("#auth").click(function() {
 		$.ajax({
 			method: "GET",
-			url:"/auth",
+			url:"/test_auth",
 			beforeSend: function (request) {
 				var token = $("#token").val();
 				request.setRequestHeader("tk-auth", token);
