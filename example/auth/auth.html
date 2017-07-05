@@ -21,16 +21,29 @@ $(document).ready(function () {
 		});
 	});
 
-	$("#auth").click(function() {
+	function proceed_to_auth(beforeSendCallbk) {
 		$.ajax({
 			method: "GET",
 			url:"/test_auth",
-			beforeSend: function (request) {
-				var token = $("#token").val();
-				request.setRequestHeader("tk-auth", token);
-			},
+			beforeSend: beforeSendCallbk
 		}).done(function (msg) {
 			$("#retjson").text(JSON.stringify(msg, null, 2));
+			if (msg.pass) {
+				setTimeout(function () {
+					window.location.replace('some/where');
+				}, 2000);
+			}
+		});
+	}
+
+	$("#auth-cookie").click(function() {
+		proceed_to_auth();
+	});
+	$("#auth-header").click(function() {
+		document.cookie='tk-auth=' + '';
+		proceed_to_auth(function (request) {
+			var token = $("#token").val();
+			request.setRequestHeader("tk-auth", token);
 		});
 	});
 });
@@ -44,7 +57,8 @@ $(document).ready(function () {
 
 <h3>Auth</h3>
 <input  id="token" style="width: 100%" placeholder="token"/>
-<button id="auth">token authentication</button>
+<button id="auth-cookie">use cookie token</button>
+<button id="auth-header">use HTTP header token</button>
 
 <h3>Return JSON</h3>
 <span id="retjson" style="color:gray"></span></p>

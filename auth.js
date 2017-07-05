@@ -43,6 +43,11 @@ exports.login = function (name, passwd, ip) {
 	var perm = [];
 	var token = '';
 
+	name = name || '';
+	passwd = passwd || 'foo'; // jwt.sign() does not take
+	                          // empty string.
+	ip = ip || '';
+
 	try {
 		pass = exports.verifyUsrPasswd(name, passwd);
 		if (!pass)
@@ -88,6 +93,8 @@ function tryDecodeJWT(token) {
 }
 
 exports.tokVerify = function (token) {
+	token = token || '';
+
 	var decTok = tryDecodeJWT(token);
 	var username = decTok['loggedInAs'] || '';
 	var perm = decTok['perm'] || [];

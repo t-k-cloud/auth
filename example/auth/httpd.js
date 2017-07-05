@@ -1,4 +1,4 @@
-var express = require('express')
+var express = require('express');
 var bodyParser = require('body-parser');
 var auth= require('../../auth.js');
 
@@ -11,10 +11,16 @@ function require_auth(req, res, next) {
 	var authRes = auth.tokVerify(token);
 	var fromUrl = encodeURI(req.url);
 
-	if (authRes.pass)
+	if (authRes.pass) {
 		return next();
-	else
-		res.redirect('/auth.html?from=' + fromUrl);
+	} else {
+		res.cookie('tk-from', fromUrl, {
+			maxAge: 10000,
+			httpOnly: true }
+		);
+
+		res.redirect('/auth.html');
+	}
 }
 
 app.post('/login', function (req, res) {
@@ -27,6 +33,11 @@ app.post('/login', function (req, res) {
 		reqJson.username,
 		reqJson.password,
 		ip
+	);
+
+	res.cookie('tk-auth', loginRes.token, {
+		maxAge: 10000,
+		httpOnly: true }
 	);
 
 	console.log(reqJson.username + ': ' + loginRes.msg);
