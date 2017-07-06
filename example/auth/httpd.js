@@ -1,25 +1,24 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 var auth= require('../../auth.js');
 
 var app = express();
-app.use(bodyParser.json());
+app.use(bodyParser.json()); /* for req.body */
+app.use(cookieParser()); /* for req.cookies */
 
 function require_auth(req, res, next) {
-	var reqHeaders = req.headers;
-	var token = reqHeaders['tk-auth'] || '';
+	var token = req.headers['tk-auth'] ||
+	            req.cookies['tk-auth'] ||
+	            '';
 	var authRes = auth.tokVerify(token);
 	var fromUrl = encodeURI(req.url);
 
 	if (authRes.pass) {
 		return next();
 	} else {
-		res.cookie('tk-from', fromUrl, {
-			maxAge: 10000,
-			httpOnly: true }
-		);
-
-		res.redirect('/auth.html');
+		res.redirect('/auth.html?next=' +
+		             encodeURIComponent(fromUrl));
 	}
 }
 
@@ -36,9 +35,10 @@ app.post('/login', function (req, res) {
 	);
 
 	res.cookie('tk-auth', loginRes.token, {
-		maxAge: 10000,
-		httpOnly: true }
-	);
+		maxAge: 24 * 3600 * 1000, /* one day */
+		httpOnly: false /* prohibit js access to
+		                   this cookie */
+	});
 
 	console.log(reqJson.username + ': ' + loginRes.msg);
 	console.log(loginRes.perm);
@@ -47,12 +47,6 @@ app.post('/login', function (req, res) {
 		"loginPass": loginRes.pass,
 		"token": loginRes.token
 	});
-
-}).get('/test_auth', function (req, res) {;
-	var reqHeaders = req.headers;
-	var token = reqHeaders['tk-auth'] || '';
-	var authRes = auth.tokVerify(token);
-	res.json(authRes);
 
 }).get('/private', require_auth, function (req, res) {;
 	res.send('look at me!');

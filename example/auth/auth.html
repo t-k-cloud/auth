@@ -21,30 +21,17 @@ $(document).ready(function () {
 		});
 	});
 
-	function proceed_to_auth(beforeSendCallbk) {
-		$.ajax({
-			method: "GET",
-			url:"/test_auth",
-			beforeSend: beforeSendCallbk
-		}).done(function (msg) {
-			$("#retjson").text(JSON.stringify(msg, null, 2));
-			if (msg.pass) {
-				setTimeout(function () {
-					window.location.replace('some/where');
-				}, 2000);
-			}
-		});
+	function getNextURL() {
+		var parm = window.location.search;
+		var m = parm.match(/next=([^&]+)/) || [];
+		if (m[1] == undefined)
+			return '/';
+		else
+			return decodeURIComponent(m[1]);
 	}
 
-	$("#auth-cookie").click(function() {
-		proceed_to_auth();
-	});
-	$("#auth-header").click(function() {
-		document.cookie='tk-auth=' + '';
-		proceed_to_auth(function (request) {
-			var token = $("#token").val();
-			request.setRequestHeader("tk-auth", token);
-		});
+	$("#auth").click(function() {
+		window.location.replace(getNextURL());
 	});
 });
 </script>
@@ -56,9 +43,9 @@ $(document).ready(function () {
 <button id="login">login</button>
 
 <h3>Auth</h3>
-<input  id="token" style="width: 100%" placeholder="token"/>
-<button id="auth-cookie">use cookie token</button>
-<button id="auth-header">use HTTP header token</button>
+<input  id="token" style="width: 100%; background-color: #e4e4e4"
+placeholder="token" readonly/>
+<button id="auth">proceed and redirect</button>
 
 <h3>Return JSON</h3>
 <span id="retjson" style="color:gray"></span></p>
