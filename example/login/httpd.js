@@ -4,7 +4,7 @@ var app = express();
 
 expAuth.init(app, {
 	keyName: 'tk-auth',
-	loginRoute: '/login'
+	loginRoute: 'login'
 });
 
 app.get('/login', function (req, res) {
