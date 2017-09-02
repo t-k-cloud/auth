@@ -14,8 +14,14 @@ exports.updateUsrPass = function (name, passwd) {
 	var config = ini.parse(cfgtxt);
 	var salt = hash.genSalt();
 
+	if (config[name] == undefined) {
+		console.log('username does not exist, creating...');
+		config[name] = {};
+	}
+
 	config[name]['hash'] = hash.hashPasswd(name, passwd, salt);
 	config[name]['salt'] = salt;
+	config[name]['perm'] = ['default'];
 	fs.writeFileSync(defaultCfgPath, ini.stringify(config));
 };
 
