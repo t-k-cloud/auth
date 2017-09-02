@@ -10,6 +10,7 @@ exports.usrExits = function (name) {
 };
 
 exports.updateUsrPass = function (name, passwd) {
+	fs.closeSync(fs.openSync(defaultCfgPath, 'a')) // touch
 	var cfgtxt = fs.readFileSync(defaultCfgPath, 'utf-8');
 	var config = ini.parse(cfgtxt);
 	var salt = hash.genSalt();
