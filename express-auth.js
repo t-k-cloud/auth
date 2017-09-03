@@ -20,7 +20,7 @@ exports.init = function (app, opt) {
 exports.middleware = function (req, res, next) {
 	var token = req.cookies[options['keyName']] || '';
 	var authRes = auth.tokVerify(token);
-	var fromUrl = encodeURI(req.url);
+	var fromUrl = encodeURI(req.originalUrl);
 
 	if (authRes.pass) {
 		return next();
