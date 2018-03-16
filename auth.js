@@ -60,8 +60,8 @@ exports.login = function (name, passwd, ip) {
 
 	/* login log */
 	let now = (new Date()).toString();
-	fs.appendFile(defaultLoginLog, now + ' ' + ip + ' "' + name +
-	              '" ' + msg + "\n");
+	fs.appendFileSync(defaultLoginLog, now + ' ' + ip +
+	                  ' "' + name + '" ' + msg + "\n");
 	/* generate token */
 	if (pass) {
 		token = gen_jwt_token(

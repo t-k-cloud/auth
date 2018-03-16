@@ -1,6 +1,7 @@
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var auth= require('./auth.js');
+var request = require('request');
 
 var options = {
 	keyName: 'auth',
@@ -19,15 +20,14 @@ exports.init = function (app, opt) {
 
 exports.middleware = function (req, res, next) {
 	var token = req.cookies[options['keyName']] || '';
-	var authRes = auth.tokVerify(token);
-	var referer = req.header('Referer') || '/';
-	var fromUrl = encodeURI(referer);
+	var fromUrl = encodeURI(req.url);
 
+	var authRes = auth.tokVerify(token);
 	if (authRes.pass) {
 		return next();
 	} else {
 		res.redirect(options['loginRoute'] + '?next=' +
-		             encodeURIComponent(fromUrl));
+					 encodeURIComponent(fromUrl));
 	}
 }
 
@@ -49,8 +49,8 @@ exports.handleLoginReq = function (req, res) {
 		                   this cookie */
 	});
 
-	console.log(reqJson.username + ': ' + loginRes.msg);
-	console.log(loginRes.perm);
+	console.log('login user ' + reqJson.username + ': ' + loginRes.msg);
+	//console.log(loginRes.perm);
 	console.log(loginRes.token);
 	res.json({
 		"loginPass": loginRes.pass,
