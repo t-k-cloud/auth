@@ -59,7 +59,8 @@ exports.login = function (name, passwd, ip) {
 	}
 
 	/* login log */
-	fs.appendFile(defaultLoginLog, ip + ' "' + name +
+	let now = (new Date()).toString();
+	fs.appendFile(defaultLoginLog, now + ' ' + ip + ' "' + name +
 	              '" ' + msg + "\n");
 	/* generate token */
 	if (pass) {
