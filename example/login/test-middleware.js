@@ -4,8 +4,9 @@ var app = express();
 let port = 8080;
 
 expAuth.init(app, {
-	keyName: 'tk-auth',
-	loginRoute: 'login'
+	loginRoute: '/auth/login',
+	verifyUrl: 'http://localhost/auth/token_verify',
+	keyName: 'tk-auth'
 });
 
 app.get('/private', expAuth.middleware, function (req, res) {
