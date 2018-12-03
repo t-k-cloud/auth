@@ -22,10 +22,12 @@ exports.init = function (app, opt) {
 
 exports.middleware = function (req, res, next) {
 	var token = req.cookies[options['keyName']] || '';
-	var fromUrl = req.header('X-original-uri') || req.url;
+	var targetUrl = req.header('X-original-uri') || req.url;
+	var fromUrl = req.headers.referer;
 
 	// console.log(req.headers);
 	console.log('fromUrl: ' + fromUrl);
+	console.log('targetUrl: ' + targetUrl);
 	console.log('Verifing token: ' + token);
 
 	request.post({
@@ -41,8 +43,15 @@ exports.middleware = function (req, res, next) {
 		if (authRes.pass) {
 			return next();
 		} else {
-			res.redirect(options['loginRoute'] + '?next=' +
-						 encodeURIComponent(fromUrl));
+			if (req.accepts('json') === 'json') {
+				console.log('JSON request, send back JSON')
+				res.json({'login': options['loginRoute']});
+			} else {
+				console.log('HTML request, send 302 code')
+				var redirect_url = options['loginRoute'] + '?next='
+				                 + encodeURIComponent(targetUrl)
+				res.redirect(redirect_url);
+			}
 		}
 	});
 }
