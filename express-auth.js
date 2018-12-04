@@ -43,7 +43,8 @@ exports.middleware = function (req, res, next) {
 		if (authRes.pass) {
 			return next();
 		} else {
-			if (req.accepts('json') === 'json') {
+			req_content_type = req.accepts('html', 'json')
+			if (req_content_type === 'json') {
 				console.log('JSON request, send back JSON')
 				res.json({'login': options['loginRoute']});
 			} else {
