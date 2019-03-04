@@ -20,6 +20,10 @@ exports.init = function (app, opt) {
 	});
 }
 
+exports.no_middleware = (_, __, next) => {
+	return next();
+}
+
 exports.middleware = function (req, res, next) {
 	var token = req.cookies[options['keyName']] || '';
 	var targetUrl = req.header('X-original-uri') || req.url;
