@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>Login</title>
 <script type="text/javascript" src="./jquery.min.js"></script>
 <script>
 $(document).ready(function () {
 	$("#login").click(function() {
+		$("#sign").animate({
+            fontSize: "1.2em"
+        }, 300).animate({
+            fontSize: "1.0em"
+		}, 300);
+		
 		$.ajax({
 			method: "POST",
 			url:"login_auth",
@@ -35,6 +42,10 @@ $(document).ready(function () {
 		else
 			return decodeURIComponent(m[1]);
 	}
+
+	$('#password').keypress(function(e){
+		if(e.keyCode==13) $('#login').click();
+	});
 });
 </script>
 </head>
@@ -44,7 +55,7 @@ $(document).ready(function () {
 <input type="password" id="password" placeholder="password"/>
 <button id="login">login</button>
 
-<h3>Return JSON</h3>
+<h3 id="sign">Return JSON</h3>
 <span id="retjson" style="color:gray"></span></p>
 </body>
 </html>
